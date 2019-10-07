@@ -50,7 +50,9 @@ module.exports.datastores = {
     ***************************************************************************/
     // adapter: 'sails-mysql',
     // url: 'mysql://user:password@host:port/database',
-
+    adapter: 'sails-mongo',
+       url: 'mongodb://root@localhost/pugsontheyacht'
+       //launch mongodb in cmd: C:\apps\mongodb-win32-x86_64-2012plus-4.2.0\bin>mongod.exe --dbpath=C:\Users\user1\Work\irikorn\nodejs_webapp\pugsontheyacht\.tmp\mongoDb
   },
 
 

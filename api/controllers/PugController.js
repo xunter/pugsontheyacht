@@ -18,8 +18,9 @@ module.exports = {
 
   add: async function(req, res) {
     let newPugId = await sails.helpers.generateGuid();
+    let mongoDbId = newPugId.replace('-', '').replace('-', '').replace('-', '').replace('-', '').substr(0, 24);
     let addingPug = req.body;
-    let newPugRecord = await Pug.create(_.extend(addingPug, { id: newPugId, date: new Date().toISOString() })).fetch();
+    let newPugRecord = await Pug.create(_.extend(addingPug, { id: mongoDbId, date: new Date().toISOString() })).fetch();
 
     return res.json({ addedPug: newPugRecord });
   },

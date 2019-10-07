@@ -16,6 +16,55 @@ parasails.registerPage('list', {
   beforeMount: function() {
     // Attach any initial data from the server.
     _.extend(this, SAILS_LOCALS);
+
+    //let csrf = ;
+
+    let backendApiService = {
+      add: async function(pug) {
+        const rawResponse = await fetch('/api/pug/add', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(pug)
+        });
+        const content = await rawResponse.json();
+
+        return content.addedPug;
+      },
+
+
+        update: async function(pug) {
+          const rawResponse = await fetch('/api/pug/update', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(pug)
+          });
+          const content = await rawResponse.json();
+          return content.updatedPug;
+        },
+
+
+          delete: async function(pug) {
+            const rawResponse = await fetch('/api/pug/delete', {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(pug)
+            });
+            const content = await rawResponse.json();
+            return content.deletedPug;
+          }
+
+    };
+
+    _.extend(this, {backendApiService: backendApiService});
   },
   mounted: async function() {
     //…
@@ -41,21 +90,34 @@ parasails.registerPage('list', {
     },
 
     submitAddNewPug: function() {
-
+      let self = this;
       this.addnewpugmodal = false;
 
       console.log(this.addingpug);
 
-      this.pugs.push({ id: new Date().getTime(), date: new Date().toISOString(), name: this.addingpug.name, text: this.addingpug.text });
+      this.backendApiService.add(this.addingpug).then(function(addedPug) {
+        const newpug = _.extend({}, self.addingpug);
+        newpug.id = addedPug.id;
+        newpug.date = addedPug.date;
+        self.pugs.push(newpug);
+      });
+
+      //this.pugs.push({ id: new Date().getTime(), date: new Date().toISOString(), name: this.addingpug.name, text: this.addingpug.text });
 
 
 
     },
 
     deletePug: function(deletingPug) {
-      let deletingIndex = this.pugs.indexOf(deletingPug);
-      console.log(deletingIndex);
-      this.pugs.splice(deletingIndex, 1);
+      let self = this;
+
+
+      this.backendApiService.delete(deletingPug).then(function(deletedPug) {
+
+        let deletingIndex = self.pugs.indexOf(deletingPug);
+        console.log(deletingIndex);
+        self.pugs.splice(deletingIndex, 1);
+      });
     },
 
     editPug: function(editingPug) {
@@ -72,11 +134,15 @@ parasails.registerPage('list', {
 
     saveEditingPug: function(editingPug) {
       var self = this;
-      let editingPugModel = this.pugs.find(function(p) { return p.id === self.editingpug.id; });
-      this.editingpug.id = '';
 
-      editingPugModel.name = this.editingpug.name;
-      editingPugModel.text = this.editingpug.text;
+      this.backendApiService.update(self.editingpug).then(function(updatedPug) {
+        let editingPugModel = self.pugs.find(function(p) { return p.id === updatedPug.id; });
+        self.editingpug.id = '';
+
+        editingPugModel.name = updatedPug.name;
+        editingPugModel.text = updatedPug.text;
+      });
+
     }
 
 

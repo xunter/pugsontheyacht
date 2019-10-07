@@ -12,6 +12,9 @@ module.exports.routes = {
 
 
   'GET /pug/list':                   { action: 'pug/list' },
+  'POST /api/pug/add': { action: 'pug/add' },
+  'POST /api/pug/update': { action: 'pug/update' },
+  'POST /api/pug/delete': { action: 'pug/delete' },
 
   //  ╦ ╦╔═╗╔╗ ╔═╗╔═╗╔═╗╔═╗╔═╗
   //  ║║║║╣ ╠╩╗╠═╝╠═╣║ ╦║╣ ╚═╗
